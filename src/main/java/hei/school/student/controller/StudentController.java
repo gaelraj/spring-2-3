@@ -31,5 +31,13 @@ public class StudentController {
             return studentService.getAllStudentsName();
     }
 
+    @GetMapping("/students")
+    public String getStudents(@RequestHeader("Accept") String headerType ) {
+        if ("text/plain".equals(headerType)) {
+            return studentService.getAllStudentsName();
+        } else {
+            return "Format non supporté";
+        }
+    }
 
 }
