@@ -11,10 +11,6 @@ import java.util.stream.Collectors;
 public class StudentService {
     private List<Student> students = new ArrayList<>();
 
-    public StudentService(List<Student> students) {
-        this.students = students;
-    }
-
     public List<Student> addStudents(List<Student> newStudents) {
         for(Student newSTD : newStudents) {
             if(newStudents.isEmpty()) {
@@ -28,7 +24,7 @@ public class StudentService {
     }
 
     public String getAllStudentsName() {
-        StringBuilder sb = new StringBuilder();
+
         return students.stream()
                 .map(e -> e.getFirstName() + " " + e.getLastName())
                 .collect(Collectors.joining(", "));
