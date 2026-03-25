@@ -1,6 +1,7 @@
 package hei.school.student.controller;
 
 import hei.school.student.entity.Student;
+import hei.school.student.exception.BadRequestException;
 import hei.school.student.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,35 +16,18 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    @GetMapping("/hello-world")
-    public String helloWorld() {
-        return "Hello world";
-    }
-
-    @GetMapping("/welcome")
-    public ResponseEntity<String> welcome(@RequestParam(required = false) String name) {
-        if (name == null || name.isEmpty()){
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Name parameter is required");
-        }
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("Welcome " + name);
-    }
-
     @PostMapping("/students")
-    public ResponseEntity<?> addStudentList(@RequestBody List<Student> newStudentList) {
+    public ResponseEntity<?> createStudents(@RequestBody List<Student> newStudentList) {
 
             try {
-                List<Student> result = studentService.addStudents(newStudentList);
+                List<Student> allStudents = studentService.addStudents(newStudentList);
                 return ResponseEntity
                         .status(HttpStatus.CREATED)
-                        .body(result);
-            } catch (Exception e) {
+                        .body(allStudents);
+            } catch (BadRequestException e) {
                 return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .status(HttpStatus.BAD_REQUEST)
+                        .header("Content-Type", "text/plain")
                         .body("Error : " + e.getMessage());
             }
     }
@@ -57,7 +41,7 @@ public class StudentController {
                          .body("Accept header is required");
              }
 
-             if (!headerAcceptType.equals("text/plain") && !headerAcceptType.equals("applicaiton/json")) {
+             if (!headerAcceptType.equals("text/plain") && !headerAcceptType.equals("application/json")) {
                  return ResponseEntity
                          .status(HttpStatus.NOT_IMPLEMENTED)
                          .body("Accept type not supported : " + headerAcceptType);
@@ -71,7 +55,7 @@ public class StudentController {
 
              return ResponseEntity
                      .status(HttpStatus.OK)
-                     .body(studentService.getAllStudentsName());
+                     .body(studentService.getAllStudents());
 
          }catch (Exception e) {
              return ResponseEntity
